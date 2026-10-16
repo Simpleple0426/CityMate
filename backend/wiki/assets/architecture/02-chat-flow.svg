@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="795" viewBox="0 0 1080 795" role="img" aria-label="CoursePilot 对话与提交链路">
+<rect width="1080" height="100%" fill="#f7f9fc"/>
+<style>text {font-family: Microsoft YaHei, Noto Sans CJK SC, sans-serif;fill:#172b4d} .title{font-size:28px;font-weight:bold}.label{font-size:22px;font-weight:bold}.body{font-size:20px}</style>
+<text x="50" y="55" class="title">CoursePilot 对话与提交链路</text>
+<rect x="50" y="90" width="980" height="108" rx="12" fill="white" stroke="#cbd5e1"/>
+<text x="75" y="130" class="label">HTTP 入口</text>
+<text x="350" y="130" class="body">/chat → 读取记忆 → 识别意图</text>
+<text x="350" y="162" class="body">构造 Request 并调用 Orchestrator.run</text>
+<path d="M540 201 v15 m-5 -5 l5 5 5 -5" fill="none" stroke="#64748b" stroke-width="2"/>
+<rect x="50" y="225" width="980" height="108" rx="12" fill="white" stroke="#cbd5e1"/>
+<text x="75" y="265" class="label">业务控制与要求</text>
+<text x="350" y="265" class="body">完整确认或取消 → 确定性业务处理</text>
+<text x="350" y="297" class="body">其他消息 → 更新多轮要求与任务焦点</text>
+<path d="M540 336 v15 m-5 -5 l5 5 5 -5" fill="none" stroke="#64748b" stroke-width="2"/>
+<rect x="50" y="360" width="980" height="108" rx="12" fill="white" stroke="#cbd5e1"/>
+<text x="75" y="400" class="label">角色路由</text>
+<text x="350" y="400" class="body">主角色 + 辅助角色</text>
+<text x="350" y="432" class="body">辅助顺序执行 → 主角色</text>
+<path d="M540 471 v15 m-5 -5 l5 5 5 -5" fill="none" stroke="#64748b" stroke-width="2"/>
+<rect x="50" y="495" width="980" height="108" rx="12" fill="white" stroke="#cbd5e1"/>
+<text x="75" y="535" class="label">执行分支</text>
+<text x="350" y="535" class="body">规则选班与资格核验 或 模型工具循环</text>
+<text x="350" y="567" class="body">RAG 按需调用 业务事实来自数据库</text>
+<path d="M540 606 v15 m-5 -5 l5 5 5 -5" fill="none" stroke="#64748b" stroke-width="2"/>
+<rect x="50" y="630" width="980" height="108" rx="12" fill="white" stroke="#cbd5e1"/>
+<text x="75" y="670" class="label">结果返回</text>
+<text x="350" y="670" class="body">草稿等待确认 提交结果为待审核</text>
+<text x="350" y="702" class="body">记录轨迹 写回记忆 后台更新画像</text>
+</svg>
