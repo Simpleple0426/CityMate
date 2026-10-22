@@ -52,25 +52,6 @@
 
 ## 后端设计
 
-```mermaid
-flowchart LR
-    U[Vue 页面 / 助手] --> API[FastAPI · Session 与权限]
-    API --> AG[Agent · 角色与工具白名单]
-    AG --> LLM[兼容 API 的模型服务]
-    AG --> KB[政策分块检索 · 可选 Chroma / MCP]
-    AG --> B[业务服务]
-    API --> B
-    B --> DB[(MySQL)]
-    B --> R[(Redis · Session / 缓存 / GEO)]
-    B --> LUA[Lua · 库存与重复领取校验]
-    LUA --> S[Redis Streams]
-    S --> W[独立 Worker]
-    W --> TX[订单与 Outbox 同事务提交]
-    TX --> DB
-    DB --> O[Outbox 幂等投递与补偿]
-    O --> R
-```
-
 - **缓存：** 空值缓存、互斥重建、写后失效；另有可选逻辑过期分支，其验证范围见讲义。
 - **分布式锁：** 使用 redis-py 的所有权令牌锁；没有实现 Java Redisson 的自动看门狗机制。
 - **抢购与订单：** Lua 同步完成活动时间、库存和重复领取校验，预扣后入队；HTTP 202 仅表示受理，最终结果由独立消费者生成。
