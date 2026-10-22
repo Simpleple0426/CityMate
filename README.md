@@ -1,169 +1,196 @@
-﻿# CoursePilot · 课航
+# CityMate · 城市生活助手
 
-面向培训机构学员的课程咨询与教务办理多 Agent 演示平台，覆盖课程咨询、选课规划、教务办理、费用与权益四类任务。
+将 **Agent 工具调用与 Python 后端业务**结合的本地生活演示项目。用户可以发现商户、领取优惠、查看异步订单、提交预约、发布探店手记，也可以通过 AI 助手完成推荐查询、预约草稿生成和政策问答。
 
-项目以转班业务为主要实践场景，将意图识别、知识检索、会话记忆和业务工具连接到同一条对话链路，支持从多轮需求澄清、候选筛选、政策资格核验，到生成草稿、用户确认和提交待审核申请的完整演示。
+项目重点是让模型调用真实业务工具，并由服务端校验身份、参数、状态和确认操作；同时实现 Redis 缓存、Lua 库存预扣、Streams 消费、数据库事务与 Outbox 补偿，保留自动化测试、真实模型评测和 HTTP 压测证据。
 
-**技术栈：** Python 3.12 · FastAPI · OpenAI-compatible API · MCP · Redis · ChromaDB · SQLite · Vue 3 · Docker Compose · Prometheus
+![CityMate 演示界面](docs/citymate-rich-demo.png)
 
-## 业务场景
+> 所有商户和政策均为虚构演示资料。验证码展示在页面，不发送真实短信；优惠订单不涉及真实支付、退款或核销。本项目尚未通过生产高可用与完整回答质量验收。
 
-面向培训机构的课程咨询与教务服务场景，通过多 Agent 协作完成需求理解、知识检索、业务查询和办理引导。以转班流程为例，支持多轮需求澄清、政策资格核验及用户确认后提交申请。
+## 功能
 
-## 核心能力
+| 模块 | 已实现能力 |
+|---|---|
+| 商户发现 | 类别、关键词、人均预算筛选，商户详情，页面端 GEO 附近查询 |
+| 登录与权限 | Redis 共享 Session、HttpOnly Cookie、验证码一次消费、登录会话轮换与续期、管理员权限 |
+| 限量优惠 | Lua 原子预扣、一人一单、异步生成订单、订单查询与取消补偿 |
+| 预约 | 时段查询、15 分钟有效草稿、用户明确确认、管理员审核、事务内扣减名额 |
+| 社区 | 图文手记、点赞、关注流、共同关注、签到积分与排行榜 |
+| AI 助手 | 多轮偏好、按角色开放工具、政策检索、预约草稿、本人的订单查询、调用轨迹与 Token 用量 |
+| 管理与观测 | 商户维护、预约审核、健康检查、消费者心跳、请求指标和近似独立访客统计 |
 
-| 能力 | 实现方式 |
-| --- | --- |
-| 多 Agent 协作 | 按意图选择主 Agent，按需调用只读辅助 Agent，返回路由原因及工具使用信息 |
-| 多轮选班 | 按用户与会话持久化约束、版本和更新记录；先过滤硬性要求，再按偏好排序，无解时解释冲突 |
-| 政策与事实联合判断 | 从人工维护的结构化政策提取事实依赖，通过白名单查询业务数据，输出逐条 pass / fail / unknown 与证据来源 |
-| 可控的申请提交 | 模型调用工具生成草稿；明确确认后，由确定性处理器重新校验并提交，重复确认幂等返回 |
-| 按需知识检索 | Agent 经 MCP stdio 服务检索 ChromaDB；工具层提供查询改写、缓存、熔断和重排 |
-| 分层会话记忆 | Redis 保存工作记忆，ChromaDB 保存情景记忆与用户画像 |
-| Skills 与可观测性 | 动态加载业务规则，提供监控、Prometheus 指标及按请求查询的工具轨迹 |
+## Agent 如何工作
 
-## 系统架构
+助手根据对话选择城市推荐、预约、优惠或订单角色，每个角色只能使用限定工具。角色切换由程序规则实现，模型负责在允许范围内选择工具和生成回答。
 
-意图识别包含 LLM、Embedding 与关键词融合逻辑，并结合教育业务的显式意图和任务续接规则。通用文档检索与结构化政策判断采用不同执行路径：前者用于资料问答，后者用于可追溯的业务条件核验。
+| 工具 | 作用 |
+|---|---|
+| `search_shops` / `shop_details` | 查询项目内商户、类别与预算条件 |
+| `available_slots` / `prepare_appointment` | 查询真实时段并生成预约草稿 |
+| `vouchers` / `my_orders` | 查询优惠及当前登录用户的订单 |
+| `knowledge_search` | 检索演示政策并返回来源 |
 
-## 快速开始
+- **业务身份由服务端确定：** 工具不允许模型覆盖当前用户身份；参数由 Pydantic 校验。
+- **写操作需要确认：** 模型只能生成预约草稿；用户点击确认或输入完整口令后，程序提交待审核申请。确认不代表商户已经批准。
+- **关键业务回执由程序生成：** 预约草稿和订单查询成功后，直接依据工具结果输出，避免模型自行编造编号与状态。
+- **会话保存在 Redis：** 保存历史、角色和明确偏好，通过会话锁约束同一用户会话的并发修改。
+- **检索支持溯源：** 政策按标题和段落分块，长段落使用字符窗口与重叠；结果包含来源、章节、版本及原文位置。默认是本地词项检索，Chroma 向量检索和 MCP stdio 服务为可选路径。
+- **前端渲染 Markdown：** 支持标题、表格、列表和代码块，转义原始 HTML、过滤危险链接，不自动加载模型输出的远程图片。
 
-### 1. 配置环境
+示例对话：
 
-以下命令在 `backend/` 目录执行。需要 Docker 和 Docker Compose；本地 Python 开发推荐使用 Python 3.12。
+```text
+推荐人均不超过 100 元的美食餐厅
+改成咖啡店，人均不超过 50 元
+我想预约青岚攀岩，请查询可预约时段
+请选择返回的某个时段，2 个人，生成预约草稿
+预约草稿的有效期是多久？请查询平台政策
+```
+
+当前真实模型评测使用云端 `Qwen/Qwen3-32B`，没有在本机部署 32B 权重；模型通过兼容 OpenAI 的 API 接入。未配置模型时使用明确标注的规则助手。**页面端支持附近查询，但当前对话工具不支持坐标或距离筛选**；助手也不能替用户抢券、取消订单、付款或批准预约。
+
+## 后端设计
+
+```mermaid
+flowchart LR
+    U[Vue 页面 / 助手] --> API[FastAPI · Session 与权限]
+    API --> AG[Agent · 角色与工具白名单]
+    AG --> LLM[兼容 API 的模型服务]
+    AG --> KB[政策分块检索 · 可选 Chroma / MCP]
+    AG --> B[业务服务]
+    API --> B
+    B --> DB[(MySQL)]
+    B --> R[(Redis · Session / 缓存 / GEO)]
+    B --> LUA[Lua · 库存与重复领取校验]
+    LUA --> S[Redis Streams]
+    S --> W[独立 Worker]
+    W --> TX[订单与 Outbox 同事务提交]
+    TX --> DB
+    DB --> O[Outbox 幂等投递与补偿]
+    O --> R
+```
+
+- **缓存：** 空值缓存、互斥重建、写后失效；另有可选逻辑过期分支，其验证范围见讲义。
+- **分布式锁：** 使用 redis-py 的所有权令牌锁；没有实现 Java Redisson 的自动看门狗机制。
+- **抢购与订单：** Lua 同步完成活动时间、库存和重复领取校验，预扣后入队；HTTP 202 仅表示受理，最终结果由独立消费者生成。
+- **一致性与恢复：** SQL 事务、唯一购买约束和条件更新防止重复成单；Streams 消费组支持 ACK、pending 重试及接管；订单与 Outbox 同事务提交，事件幂等投递并补偿库存。
+- **Redis 数据结构：** Hash 会话、GEO 商户位置、Bitmap 签到、Set 关注、ZSet 点赞/动态/排行、HyperLogLog 访客和 Streams 消息。
+
+这些机制及故障用例展示了业务一致性处理，不能推导为 Redis 整体数据丢失等灾难情况下零丢单。
+
+## 技术栈
+
+| 层次 | 技术 |
+|---|---|
+| 前端 | Vue 3、Vite、markdown-it |
+| API 与数据 | Python 3.12、FastAPI、Pydantic、SQLAlchemy、Alembic、MySQL |
+| 缓存与异步 | Redis、redis-py、Lua、Redis Streams、独立 Python Worker |
+| Agent | 兼容 OpenAI API 的工具调用、角色工具白名单、Redis 会话、业务确认与回执模板 |
+| 可选检索 | Chroma、MCP SDK、政策分块及来源元数据 |
+| 工程与验证 | Docker Compose、Nginx、pytest、fakeredis、HTTPX、Black、Prettier、Prometheus 指标 |
+
+## 快速启动
+
+需要 Docker 与 Docker Compose，在仓库根目录运行：
 
 ```bash
-cd backend
-cp .env.example .env
+docker compose -p citymate up -d --build
 ```
 
-Windows PowerShell 使用 `Copy-Item .env.example .env`。编辑 `.env`，填写模型配置：
-
-```dotenv
-OPENAI_API_KEY=your_api_key
-OPENAI_MODEL=your_chat_model
-OPENAI_BASE_URL=
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-REDIS_PASSWORD=replace_with_your_password
-```
-
-官方服务的 `OPENAI_BASE_URL` 留空；兼容服务填写对应 API 地址。聊天与 Embedding 均有远端调用路径，请确认服务支持配置的模型和接口。其他容器配置保留示例值即可。真实模型调用会产生 API 费用。
-
-### 2. 启动后端及依赖
-
-```bash
-docker compose up -d --build
-docker compose ps
-docker compose logs -f coursepilot
-```
-
-首次构建需要下载依赖、镜像和向量模型。Compose 启动 API、Redis、ChromaDB、Prometheus 和 Nginx；Vue 页面需要另外启动。
+默认使用 MySQL 8.4、Redis 7.4，初始化服务负责迁移和导入基础演示数据，API 与 Worker 分开运行。
 
 | 入口 | 地址 |
-| --- | --- |
-| Swagger 接口文档 | http://localhost:8000/docs |
-| 健康检查 | http://localhost:8000/health |
-| Nginx 反向代理 | http://localhost |
-| Prometheus | http://localhost:9090 |
+|---|---|
+| 前端 | <http://localhost:15173> |
+| API 文档 | <http://localhost:18000/docs> |
+| 健康检查 | <http://localhost:18000/health> |
 
-停止服务使用 `docker compose down`，默认保留业务目录和命名数据卷。
+演示管理员手机号为 `13900000000`；其他格式正确的手机号首次登录自动注册普通用户。获取验证码后在页面直接查看并登录。
 
-### 3. 启动前端（可选）
+如需使用真实模型，复制根目录 `.env.example` 为 `.env`，在本机填写 `OPENAI_API_KEY`、`OPENAI_MODEL` 和 `OPENAI_BASE_URL`，然后重新执行启动命令。`.env` 不进入版本控制；默认示例模型名不代表已经配备可用密钥。Chroma/MCP 需要额外依赖及开关，见 [开发与验收指南](docs/CITYMATE.md)。
 
-前端源码位于 `frontend/`。另开终端，在仓库根目录执行：
+本地开发需要 Python 3.12、Node.js 22、MySQL 和 Redis。完成依赖安装及数据库初始化后，Windows 可运行 `./start.ps1` 启动 API、Worker 和前端；`./start.ps1 -EnableModel` 启用已配置的模型，`./start.ps1 -Action stop` 停止该脚本启动的应用进程。详细安装与手动启动步骤见 [开发指南](docs/CITYMATE.md)。
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+截图使用扩充演示数据。首次部署只有基础数据，可按开发指南运行 `python -m citymate.cli seed-rich` 追加商户、手记及模拟账号。默认配置仅面向本机演示；完整容器配置与本机缓存镜像验证环境不同，不能将 MySQL 5.7 的实测结果直接视为 MySQL 8.4 的性能成绩。
 
-访问 http://localhost:5173，学员 ID 使用 `student_demo`。Node.js 版本需满足前端 Vite 依赖要求。前端更多配置见其 README。
+## 验证记录
 
-### 4. 体验转班流程
+各批次使用不同的代码版本和环境，结果分别保留，不能累加成一次全量验收。
 
-在同一会话中依次发送：
+| 验证 | 已记录结果 | 边界与证据 |
+|---|---|---|
+| 上传前默认回归 · 2026-10-22 | 86 通过、18 跳过；前端 7 项通过且构建成功 | 本轮未启用 8 项 Chroma/MCP 与 10 项真实服务用例；不重复计算历史成绩 |
+| 分块后端回归 · 2026-10-22 | 94 通过、10 跳过 | 包含真实 Chroma/MCP；业务使用 SQLite/FakeRedis，模型决策为脚本模拟；[检索报告](docs/知识检索联调报告.md) |
+| 真实服务并发与故障 · 2026-10-20 | 31 项回归及 10 项新增验证通过 | MySQL/Redis，包含竞争、重复消费、进程中断恢复与补偿；[故障报告](docs/并发与故障验证报告.md) |
+| 真实 HTTP 低速持续负载 · 2026-10-22 | 约 10 请求/秒，持续两分钟，1,200 次全部成功；接口 P95 约 63 ms | i9-12900H、本机单 API + 单 Worker、MySQL 5.7/Redis 7；[压测报告](docs/压力测试与容量验证报告.md) |
+| 更高 HTTP 负载 | 队列积压超过 1,000 条；50 请求槽位时有 1 次连接异常 | 吞吐瓶颈尚待优化；受理 QPS 不等于成单速度 |
+| 真实 32B 模型任务 · 2026-10-22 | 1/2/4 并发各 6 个任务，18/18 流程断言通过，36 次聊天 HTTP 成功 | 分块前版本；人工发现能力越界承诺和多余标签，不是回答准确率 100%；[压测报告](docs/压力测试与容量验证报告.md) |
+| 分块向量检索 · 2026-10-22 | 6 条中文问题中，正确条款首位命中 3/6，前 3 块命中 5/6 | 小样本，未做分块后真实模型质量复测；[检索报告](docs/知识检索联调报告.md) |
+| 前端展示 · 2026-10-19 | 7 项测试通过，构建与格式检查通过 | HTTP 客户端、Markdown 安全渲染及实际浏览器检查；[前端说明](frontend/README.md) |
 
-```text
-帮我转到周日班，不想补钱，老师最好不变
-下午不行，只能晚上
-最多补两百元也可以
-帮我转到 PY-SUN-EVE
-确认提交 <回复中实际返回的草稿ID>
-```
+业务压测的库存与订单核对均通过；高负载的积压、连接错误，以及 Agent 的回答问题都保留在报告中。目前适合作为可演示、可复现验证的学习与工程实践项目，仍需要性能优化、更多回答质量评测和部署验证。
 
-第二轮无完全匹配方案时，系统应解释时间与费用冲突；用户放宽费用后才允许新的候选。提交成功后返回待教务审核申请，不代表完成转班或扣款。
+## 运行测试
 
-也可在 Swagger 调用 `POST /chat`：
-
-```json
-{
-  "message": "我是否符合免费转班条件？",
-  "user_id": "student_demo",
-  "conv_id": "demo-transfer-001"
-}
-```
-
-后续请求沿用相同的 `user_id` 和 `conv_id`。目标班级未知时先补充信息，例如继续发送 `PY-SUN-PM`。
-
-## API 概览
-
-| 接口 | 用途 |
-| --- | --- |
-| `POST /chat` | 对话、Agent 路由与业务工具调用 |
-| `POST /search` | 知识检索 |
-| `POST /knowledge/add`、`POST /knowledge/upload` | 文本与文件导入 |
-| `GET /knowledge/stats` | 知识库统计 |
-| `GET /skills`、`POST /skills/reload` | Skills 查看与重载 |
-| `GET /trace/tool/{request_id}`、`GET /trace/tools` | 工具调用轨迹 |
-| `GET /monitor`、`GET /metrics` | 运行监控与 Prometheus 指标 |
-| `POST /eval/run` | 内置评测入口 |
-
-对话响应提供请求与会话 ID、意图、主 Agent、辅助 Agent、路由原因、工具列表及耗时。完整字段以 `/docs` 为准。
-
-## 代码导航
-
-```text
-api/main.py                      FastAPI 入口与生命周期管理
-agents/agent_orchestrator.py      角色路由、工具循环与确认提交
-agents/education_store.py         SQLite 业务状态与约束持久化
-agents/transfer_advisor.py        候选筛选、排序与冲突解释
-core/intent_recognizer.py         意图识别
-core/transfer_requirements.py     多轮约束增量解析
-core/policy_evidence.py           政策匹配、事实依赖与逐条核验
-core/skill_loader.py              Skills 加载
-integrations/knowledge_client.py  MCP 客户端
-integrations/knowledge_server.py  MCP stdio 服务端
-integrations/tool_manager.py      检索治理与工具管理
-memory/conversation_memory.py     工作记忆、情景记忆与画像
-monitor/                         监控与指标
-evaluation/                      离线对照、真实模型联调与评测
-tests/                           自动化测试
-skills/                          业务规则与参考资源
-data/demo_docs/                   演示资料与政策
-wiki/                            设计说明与源码阅读指南
-```
-
-建议先阅读 [Agent 编排](backend/agents/agent_orchestrator.py)、[多轮约束解析](backend/core/transfer_requirements.py) 和 [政策事实核验](backend/core/policy_evidence.py)，再结合[后端架构与源码学习指南](backend/wiki/后端架构与源码学习指南.md)了解完整链路。
-
-## 测试与评测
-
-安装后端依赖后，在后端目录执行：
+在 `backend` 目录使用项目 Python 环境：
 
 ```bash
-python -m pip install -r requirements.txt
-python -m unittest discover -s tests -v
-python -m evaluation.transfer_benchmark --output data/eval/transfer-strategies.json
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+python -m black --check citymate tests migrations evals
+
+# 可选：真实模型调用，会产生费用；使用隔离的合成业务数据
+python -m evals.run_agent --live --repeat 2 --output logs/agent-new-run.json
 ```
 
-已有评测记录如下，具体运行方式与统计限制见[真实模型联调与评测](backend/wiki/真实模型联调与评测.md)：
+默认测试使用 SQLite/FakeRedis；真实 MySQL/Redis 用例与 Chroma/MCP 用例需要按报告配置依赖和环境变量，跳过不算验证通过。真实 TCP 压测入口是 `python -m evals.run_load`，必须准备独立空测试库及 Redis DB 15，详见 [复现步骤](docs/压力测试与容量验证报告.md#4-复现)。
 
-| 评测 | 已有记录 | 范围与解释 |
-| --- | --- | --- |
-| 多轮策略对照 | 只用最后一轮 2/6；持续维护 6/6 | 6 个人工确定性案例，不是真实模型成功率 |
-| 真实模型 full 联调 | 29/30 | 覆盖实际 `/chat`、Redis、ChromaDB、MCP 与隔离 SQLite 的人工场景程序检查 |
-| 失败项修复后单独复测 | 3/3 | 单独复测结果，未重新完整跑出 30/30 |
+在 `frontend` 目录：
 
-`core` 模式仅覆盖模型、意图、Skills 与隔离业务数据库；`full` 增加后端完整链路，仍不包含浏览器操作、真实审批与支付。上述结果不代表线上成功率或统计显著的泛化结论。
+```bash
+npm ci
+npm test
+npm run build
+npm run format:check
+```
 
-评测输出位于 `data/eval/`，默认被 Git 忽略，新克隆仓库不保证包含本地历史报告，可按文档重新生成。本 README 引用已有记录，本次文档修改未重新运行模型评测。
+## 项目结构
+
+```text
+backend/
+  citymate/
+    app.py / routers/     API、生命周期、业务路由
+    dependencies.py       当前用户与权限依赖
+    service.py            Session、商户、缓存、GEO
+    commerce.py           订单、Outbox、预约事务
+    social.py             社区、关注、签到、排行
+    assistant.py          角色、工具调用、确认与回执
+    knowledge*.py         分块检索及 MCP 客户端/服务端
+    policies/             三份演示政策
+    worker.py             独立订单消费者
+  migrations/             Alembic 数据库迁移
+  tests/                  自动化测试
+  evals/                  模型、检索与 HTTP 压测入口
+frontend/
+  src/App.vue             页面入口
+  src/components/         助手 Markdown 展示组件
+  src/lib/                HTTP 与 Markdown 处理
+  tests/                  前端测试
+docs/                     项目说明、讲义、报告与原始证据
+docker-compose.yml        完整容器部署入口
+start.ps1                 Windows 本地启动/停止入口
+```
+
+本项目由 CoursePilot 演进而来，现已统一为 CityMate，旧教育版入口不在当前源码中。
+
+## 文档导航
+
+- [项目说明](docs/项目说明.md)：功能、架构、业务流程与实现边界。
+- [开发与验收指南](docs/CITYMATE.md)：环境、启动、模型配置与演示路线。
+- [Redis 实战项目讲义](docs/CityMate-Redis实战项目讲义.md)：对照源码学习 Redis 与后端设计。
+- [代码结构与开发规范](docs/代码结构与开发规范.md)：模块职责、命名与目录约定。
+- [Agent 专项评测报告](docs/Agent专项评测报告.md)：固定场景、真实模型、修复与失败样本。
+- [知识检索联调报告](docs/知识检索联调报告.md)：分块、Chroma/MCP、检索质量与版本边界。
+- [并发与故障验证报告](docs/并发与故障验证报告.md)：真实数据库、消费者中断、重试与补偿。
+- [压力测试与容量验证报告](docs/压力测试与容量验证报告.md)：实际并发、延迟、吞吐、队列与完整 Agent 任务。

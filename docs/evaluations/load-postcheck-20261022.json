@@ -1,0 +1,41 @@
+{
+  "raw_sha256": "9de22191f5a6f0605032644a86c241a58b4762630fc6d193055d5d6b14b71659",
+  "all_source_hashes_match": false,
+  "source_changes_during_run": [
+    {
+      "path": "citymate\\app.py",
+      "at_run_start": "990c4b3bda3a857f5e438d1a8ba8fd1a424d75e6561578a3a1459efce6e47f74",
+      "at_postcheck": "b35f9b2acbceddc39d915c90e333d0b79f1da7de0cfedb1f218835da3a7487fe"
+    },
+    {
+      "path": "citymate\\knowledge.py",
+      "at_run_start": "344d089df9fe419d2a536b335312e3e9612529b881e6744a12cd1a9fb1c1d1c3",
+      "at_postcheck": "2e2c51f57925edb593a3e79d9db338ef6d6736e72ec6831f2f291d1e5189c2f6"
+    },
+    {
+      "path": "citymate\\knowledge_server.py",
+      "at_run_start": "340c384a3b580f69b956bc9abf70089273e8f3dd884e1688f96024d6963006a8",
+      "at_postcheck": "55e35be9323f68eefe4871af6243a43be033ba3980b989296e4a0108994e271b"
+    }
+  ],
+  "raw_statistics_verified": true,
+  "business_requests": 5364,
+  "unique_orders": 5224,
+  "agent_tasks": 18,
+  "agent_http_calls": 36,
+  "reported_model_calls": 54,
+  "reported_tokens": 83968,
+  "usage_incomplete_turns_with_model_calls": 0,
+  "benchmark_api_closed": true,
+  "benchmark_worker_heartbeat_absent": true,
+  "website_health": {
+    "status": "ok",
+    "demo": true,
+    "worker_online": true,
+    "ai_mode": "llm"
+  },
+  "website_frontend_status": 200,
+  "redis_appendonly": "yes",
+  "clock_implementation": "GetTickCount64()",
+  "clock_resolution_s": 0.015625
+}

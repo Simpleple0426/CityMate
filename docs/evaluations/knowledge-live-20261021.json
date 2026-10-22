@@ -1,0 +1,329 @@
+{
+  "started_at": "2026-10-21T09:14:25.490765+00:00",
+  "model": "Qwen/Qwen3-32B",
+  "live_requested": true,
+  "environment": "Real Chroma default ONNX embeddings + real MCP stdio subprocess + isolated SQLite/FakeRedis + FastAPI TestClient",
+  "versions": {
+    "chromadb": "0.5.23",
+    "mcp": "1.9.4",
+    "onnxruntime": "1.31.0",
+    "openai": "1.58.1",
+    "numpy": "2.5.4"
+  },
+  "python": "3.12.14",
+  "source_sha256": {
+    "citymate\\knowledge.py": "97c98fbf0b7ead0f7be6563078b4ba3c933cd0618c1d7cd5a1d9def78780ee3f",
+    "citymate\\knowledge_client.py": "8803b39f7f35deffa72bfd6388089b1f2e0fac1916f75482ddb67110c1bd4e95",
+    "citymate\\knowledge_server.py": "340c384a3b580f69b956bc9abf70089273e8f3dd884e1688f96024d6963006a8",
+    "citymate\\assistant.py": "228d9500ee99a8d8aaca9667955c040b32f437b86e12412bbe82069548ede572",
+    "citymate\\app.py": "990c4b3bda3a857f5e438d1a8ba8fd1a424d75e6561578a3a1459efce6e47f74",
+    "citymate\\policies\\优惠与订单.txt": "1bd8f67d0c20c92316debc2d52c2fd718e5f32cf2dece93f05999247e7ecc2d2",
+    "citymate\\policies\\社区与积分.txt": "016320c49e3e61b27d45e05d0ae09be15651b23f4cc5d74482c7b252b3b64f38",
+    "citymate\\policies\\预约规则.txt": "5f01ed991e531b41a0415be1401e7c154044209259d2459d8b9d96c3a597f0c2"
+  },
+  "phases": {
+    "chroma": {
+      "passed": true,
+      "documents": 3,
+      "dimensions": 384,
+      "embedding": "Chroma default all-MiniLM-L6-v2 ONNX",
+      "reopen_count": 3
+    },
+    "mcp": {
+      "passed": true,
+      "tools": [
+        "knowledge_add",
+        "knowledge_search",
+        "knowledge_stats"
+      ],
+      "documents": 3,
+      "retrieval_cases": [
+        {
+          "query": "预约草稿多久失效？",
+          "expected_title": "预约规则",
+          "ranked_titles": [
+            "社区与积分",
+            "预约规则",
+            "优惠与订单"
+          ],
+          "top1_correct": false
+        },
+        {
+          "query": "填好了预订但还没提交，可以保留多久？",
+          "expected_title": "预约规则",
+          "ranked_titles": [
+            "社区与积分",
+            "预约规则",
+            "优惠与订单"
+          ],
+          "top1_correct": false
+        },
+        {
+          "query": "签到能得多少积分？",
+          "expected_title": "社区与积分",
+          "ranked_titles": [
+            "社区与积分",
+            "预约规则",
+            "优惠与订单"
+          ],
+          "top1_correct": true
+        },
+        {
+          "query": "我今天已经打过卡，再打卡还能加分吗？",
+          "expected_title": "社区与积分",
+          "ranked_titles": [
+            "社区与积分",
+            "预约规则",
+            "优惠与订单"
+          ],
+          "top1_correct": true
+        },
+        {
+          "query": "抢到券显示处理中，是已经成功了吗？",
+          "expected_title": "优惠与订单",
+          "ranked_titles": [
+            "优惠与订单",
+            "预约规则",
+            "社区与积分"
+          ],
+          "top1_correct": true
+        },
+        {
+          "query": "平台会真的扣钱退款吗？",
+          "expected_title": "优惠与订单",
+          "ranked_titles": [
+            "社区与积分",
+            "预约规则",
+            "优惠与订单"
+          ],
+          "top1_correct": false
+        }
+      ],
+      "top1_hits": 3,
+      "total_queries": 6
+    },
+    "live_http": {
+      "passed": true,
+      "passed_cases": 3,
+      "total_cases": 3
+    }
+  },
+  "chat_records": [
+    {
+      "question": "请检索平台政策，预约草稿的有效期是多久？",
+      "expected_source": "预约规则",
+      "http_status": 200,
+      "result": {
+        "response": "\n\n根据平台政策中的《预约规则》（citymate/预约规则.txt），**预约草稿的有效期为15分钟**。草稿生成后，用户需在此时间内明确提交确认申请，超时未确认的草稿将自动失效，需重新生成新的预约草稿。\n\n如需进一步操作，请提供商户ID、可预约时段及人数，我将协助生成草稿并展示确认口令。",
+        "conv_id": "578fb14f1a614a929da47bc2ff089813",
+        "agent": "booking",
+        "mode": "llm",
+        "response_kind": "model",
+        "preferences": {},
+        "tools": [
+          {
+            "tool": "knowledge_search",
+            "arguments": {
+              "query": "预约草稿的有效期"
+            },
+            "result": [
+              {
+                "content": "CityMate 社区与积分规则，版本 2026-10-18。\n用户可以发布探店图文、点赞、关注作者、查看共同关注和关注动态。\n每天按 Asia/Shanghai 日期签到可得 10 积分；同一天重复签到不重复增加积分。\n连续签到跨月统计；今天尚未签到时展示截至昨天的连续天数。\n排行榜依据持久化的签到积分记录重建。商户独立访问量使用 HyperLogLog 近似统计，只统计已登录访问。\n",
+                "source": "citymate/社区与积分.txt",
+                "title": "社区与积分"
+              },
+              {
+                "content": "CityMate 演示预约规则，版本 2026-10-18。\n预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。\n管理员批准时重新校验时段和剩余人数，成功后在同一数据库事务中扣减名额。\n时段已过期、人数不足时无法批准。审核通过才代表预约成功。\n目前不支持已批准预约的改期；需要联系商户处理，助手不得声称已完成改约。\n所有店铺、地址、活动均为演示资料，不代表真实商户承诺。\n",
+                "source": "citymate/预约规则.txt",
+                "title": "预约规则"
+              },
+              {
+                "content": "CityMate 演示优惠规则，版本 2026-10-18。\n每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。\n抢购请求返回受理编号后，后台异步生成订单；受理不等于订单成功。\nready 表示演示券订单已生成，processing 表示处理中，rejected 表示失败，cancelled 表示已取消。\n本平台不接真实支付，也不执行真实扣款或退款。金额使用人民币分保存。\n已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。\n",
+                "source": "citymate/优惠与订单.txt",
+                "title": "优惠与订单"
+              }
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "content": "CityMate 社区与积分规则，版本 2026-10-18。\n用户可以发布探店图文、点赞、关注作者、查看共同关注和关注动态。\n每天按 Asia/Shanghai 日期签到可得 10 积分；同一天重复签到不重复增加积分。\n连续签到跨月统计；今天尚未签到时展示截至昨天的连续天数。\n排行榜依据持久化的签到积分记录重建。商户独立访问量使用 HyperLogLog 近似统计，只统计已登录访问。\n",
+            "source": "citymate/社区与积分.txt",
+            "title": "社区与积分"
+          },
+          {
+            "content": "CityMate 演示预约规则，版本 2026-10-18。\n预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。\n管理员批准时重新校验时段和剩余人数，成功后在同一数据库事务中扣减名额。\n时段已过期、人数不足时无法批准。审核通过才代表预约成功。\n目前不支持已批准预约的改期；需要联系商户处理，助手不得声称已完成改约。\n所有店铺、地址、活动均为演示资料，不代表真实商户承诺。\n",
+            "source": "citymate/预约规则.txt",
+            "title": "预约规则"
+          },
+          {
+            "content": "CityMate 演示优惠规则，版本 2026-10-18。\n每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。\n抢购请求返回受理编号后，后台异步生成订单；受理不等于订单成功。\nready 表示演示券订单已生成，processing 表示处理中，rejected 表示失败，cancelled 表示已取消。\n本平台不接真实支付，也不执行真实扣款或退款。金额使用人民币分保存。\n已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。\n",
+            "source": "citymate/优惠与订单.txt",
+            "title": "优惠与订单"
+          }
+        ],
+        "latency_ms": 16187,
+        "model_calls": 2,
+        "token_usage": {
+          "prompt_tokens": 2644,
+          "completion_tokens": 363,
+          "total_tokens": 3007
+        },
+        "usage_complete": true
+      },
+      "checks": {
+        "http_ok": true,
+        "real_model": true,
+        "tool_called": true,
+        "expected_source": true,
+        "answer_marker": true
+      },
+      "passed": true
+    },
+    {
+      "question": "请检索平台政策，每天签到能得多少积分？重复签到会再次增加吗？",
+      "expected_source": "社区与积分",
+      "http_status": 200,
+      "result": {
+        "response": "\n\n根据平台政策文件《citymate/社区与积分.txt》的说明：\n\n1. **每日签到积分**：用户每天按Asia/Shanghai时区日期签到可获得**10积分**；\n2. **重复签到规则**：**同一天内重复签到不会重复增加积分**，即每日最多获得10积分；\n3. **连续签到统计**：连续签到天数会跨月累计，但未提及重复签到对连续天数的影响。\n\n建议您每天仅需签到一次即可获得最大积分奖励，多次签到无额外收益。",
+        "conv_id": "60e10f8b43654eb8a0b994d963e8cdc4",
+        "agent": "discovery",
+        "mode": "llm",
+        "response_kind": "model",
+        "preferences": {},
+        "tools": [
+          {
+            "tool": "knowledge_search",
+            "arguments": {
+              "query": "每天签到积分 重复签到积分"
+            },
+            "result": [
+              {
+                "content": "CityMate 社区与积分规则，版本 2026-10-18。\n用户可以发布探店图文、点赞、关注作者、查看共同关注和关注动态。\n每天按 Asia/Shanghai 日期签到可得 10 积分；同一天重复签到不重复增加积分。\n连续签到跨月统计；今天尚未签到时展示截至昨天的连续天数。\n排行榜依据持久化的签到积分记录重建。商户独立访问量使用 HyperLogLog 近似统计，只统计已登录访问。\n",
+                "source": "citymate/社区与积分.txt",
+                "title": "社区与积分"
+              },
+              {
+                "content": "CityMate 演示预约规则，版本 2026-10-18。\n预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。\n管理员批准时重新校验时段和剩余人数，成功后在同一数据库事务中扣减名额。\n时段已过期、人数不足时无法批准。审核通过才代表预约成功。\n目前不支持已批准预约的改期；需要联系商户处理，助手不得声称已完成改约。\n所有店铺、地址、活动均为演示资料，不代表真实商户承诺。\n",
+                "source": "citymate/预约规则.txt",
+                "title": "预约规则"
+              },
+              {
+                "content": "CityMate 演示优惠规则，版本 2026-10-18。\n每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。\n抢购请求返回受理编号后，后台异步生成订单；受理不等于订单成功。\nready 表示演示券订单已生成，processing 表示处理中，rejected 表示失败，cancelled 表示已取消。\n本平台不接真实支付，也不执行真实扣款或退款。金额使用人民币分保存。\n已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。\n",
+                "source": "citymate/优惠与订单.txt",
+                "title": "优惠与订单"
+              }
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "content": "CityMate 社区与积分规则，版本 2026-10-18。\n用户可以发布探店图文、点赞、关注作者、查看共同关注和关注动态。\n每天按 Asia/Shanghai 日期签到可得 10 积分；同一天重复签到不重复增加积分。\n连续签到跨月统计；今天尚未签到时展示截至昨天的连续天数。\n排行榜依据持久化的签到积分记录重建。商户独立访问量使用 HyperLogLog 近似统计，只统计已登录访问。\n",
+            "source": "citymate/社区与积分.txt",
+            "title": "社区与积分"
+          },
+          {
+            "content": "CityMate 演示预约规则，版本 2026-10-18。\n预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。\n管理员批准时重新校验时段和剩余人数，成功后在同一数据库事务中扣减名额。\n时段已过期、人数不足时无法批准。审核通过才代表预约成功。\n目前不支持已批准预约的改期；需要联系商户处理，助手不得声称已完成改约。\n所有店铺、地址、活动均为演示资料，不代表真实商户承诺。\n",
+            "source": "citymate/预约规则.txt",
+            "title": "预约规则"
+          },
+          {
+            "content": "CityMate 演示优惠规则，版本 2026-10-18。\n每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。\n抢购请求返回受理编号后，后台异步生成订单；受理不等于订单成功。\nready 表示演示券订单已生成，processing 表示处理中，rejected 表示失败，cancelled 表示已取消。\n本平台不接真实支付，也不执行真实扣款或退款。金额使用人民币分保存。\n已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。\n",
+            "source": "citymate/优惠与订单.txt",
+            "title": "优惠与订单"
+          }
+        ],
+        "latency_ms": 31172,
+        "model_calls": 2,
+        "token_usage": {
+          "prompt_tokens": 2441,
+          "completion_tokens": 697,
+          "total_tokens": 3138
+        },
+        "usage_complete": true
+      },
+      "checks": {
+        "http_ok": true,
+        "real_model": true,
+        "tool_called": true,
+        "expected_source": true,
+        "answer_marker": true
+      },
+      "passed": true
+    },
+    {
+      "question": "请检索平台优惠政策，这个平台会真的扣款和退款吗？",
+      "expected_source": "优惠与订单",
+      "http_status": 200,
+      "result": {
+        "response": "\n\n根据《CityMate 演示优惠规则》（2026-10-18版）的说明：\n\n1. **真实交易说明**  \n平台当前仅使用演示资料，所有店铺、地址、活动均为虚构内容，不涉及真实商户承诺。优惠券的领取和订单生成均为模拟流程，不对接真实支付系统，也不执行实际扣款或退款操作。\n\n2. **优惠券金额规则**  \n金额以人民币分（如100分=1元）为单位保存，但仅用于演示计算逻辑，不会涉及真实资金流动。\n\n3. **订单状态含义**  \n- `ready`：演示券订单已生成，但未取消前可能短暂显示名额占用  \n- `cancelled`：订单取消后，名额通过可靠事件恢复（恢复前可能仍显示已领）  \n- 其他状态（processing/rejected）均为流程模拟  \n\n您可放心测试优惠券抢购流程，所有操作均无实际支付风险。需要了解具体优惠活动规则时，可直接查询活动详情。",
+        "conv_id": "ed87e0298eb34ea1be67d37fb1f9a3ca",
+        "agent": "benefits",
+        "mode": "llm",
+        "response_kind": "model",
+        "preferences": {},
+        "tools": [
+          {
+            "tool": "knowledge_search",
+            "arguments": {
+              "query": "平台是否会真的扣款和退款？"
+            },
+            "result": [
+              {
+                "content": "CityMate 社区与积分规则，版本 2026-10-18。\n用户可以发布探店图文、点赞、关注作者、查看共同关注和关注动态。\n每天按 Asia/Shanghai 日期签到可得 10 积分；同一天重复签到不重复增加积分。\n连续签到跨月统计；今天尚未签到时展示截至昨天的连续天数。\n排行榜依据持久化的签到积分记录重建。商户独立访问量使用 HyperLogLog 近似统计，只统计已登录访问。\n",
+                "source": "citymate/社区与积分.txt",
+                "title": "社区与积分"
+              },
+              {
+                "content": "CityMate 演示预约规则，版本 2026-10-18。\n预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。\n管理员批准时重新校验时段和剩余人数，成功后在同一数据库事务中扣减名额。\n时段已过期、人数不足时无法批准。审核通过才代表预约成功。\n目前不支持已批准预约的改期；需要联系商户处理，助手不得声称已完成改约。\n所有店铺、地址、活动均为演示资料，不代表真实商户承诺。\n",
+                "source": "citymate/预约规则.txt",
+                "title": "预约规则"
+              },
+              {
+                "content": "CityMate 演示优惠规则，版本 2026-10-18。\n每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。\n抢购请求返回受理编号后，后台异步生成订单；受理不等于订单成功。\nready 表示演示券订单已生成，processing 表示处理中，rejected 表示失败，cancelled 表示已取消。\n本平台不接真实支付，也不执行真实扣款或退款。金额使用人民币分保存。\n已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。\n",
+                "source": "citymate/优惠与订单.txt",
+                "title": "优惠与订单"
+              }
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "content": "CityMate 社区与积分规则，版本 2026-10-18。\n用户可以发布探店图文、点赞、关注作者、查看共同关注和关注动态。\n每天按 Asia/Shanghai 日期签到可得 10 积分；同一天重复签到不重复增加积分。\n连续签到跨月统计；今天尚未签到时展示截至昨天的连续天数。\n排行榜依据持久化的签到积分记录重建。商户独立访问量使用 HyperLogLog 近似统计，只统计已登录访问。\n",
+            "source": "citymate/社区与积分.txt",
+            "title": "社区与积分"
+          },
+          {
+            "content": "CityMate 演示预约规则，版本 2026-10-18。\n预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。\n管理员批准时重新校验时段和剩余人数，成功后在同一数据库事务中扣减名额。\n时段已过期、人数不足时无法批准。审核通过才代表预约成功。\n目前不支持已批准预约的改期；需要联系商户处理，助手不得声称已完成改约。\n所有店铺、地址、活动均为演示资料，不代表真实商户承诺。\n",
+            "source": "citymate/预约规则.txt",
+            "title": "预约规则"
+          },
+          {
+            "content": "CityMate 演示优惠规则，版本 2026-10-18。\n每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。\n抢购请求返回受理编号后，后台异步生成订单；受理不等于订单成功。\nready 表示演示券订单已生成，processing 表示处理中，rejected 表示失败，cancelled 表示已取消。\n本平台不接真实支付，也不执行真实扣款或退款。金额使用人民币分保存。\n已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。\n",
+            "source": "citymate/优惠与订单.txt",
+            "title": "优惠与订单"
+          }
+        ],
+        "latency_ms": 29813,
+        "model_calls": 2,
+        "token_usage": {
+          "prompt_tokens": 1895,
+          "completion_tokens": 678,
+          "total_tokens": 2573
+        },
+        "usage_complete": true
+      },
+      "checks": {
+        "http_ok": true,
+        "real_model": true,
+        "tool_called": true,
+        "expected_source": true,
+        "answer_marker": true
+      },
+      "passed": true
+    }
+  ],
+  "limits": "Three demo policy documents; keyword checks are not full semantic grading; no browser, production database, remote MCP, load or HA test.",
+  "passed": true,
+  "finished_at": "2026-10-21T09:16:01.878279+00:00"
+}

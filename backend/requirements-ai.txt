@@ -1,0 +1,6 @@
+-r requirements.txt
+chromadb==0.5.23
+# Chroma 0.5.x uses the pre-6 positional telemetry API.
+posthog==3.25.0
+mcp==1.9.4
+sse-starlette==2.2.1

@@ -1,0 +1,284 @@
+{
+  "started_at": "2026-10-21T16:31:02.955318+08:00",
+  "model": "Qwen/Qwen2.5-32B-Instruct",
+  "repeat": 1,
+  "concurrency": 2,
+  "dataset_sha256": "d62554ad761b16cecda1700276fa26e171a6e90b4f7d92f7d5eaf76ffb0819f0",
+  "assistant_sha256": "216d69c12786df11a8526992eefb531f841c45c166c0b982ea8b2176936bf0e5",
+  "environment": "live model API + isolated SQLite/FakeRedis + lexical policies; no HTTP load test",
+  "grading": "deterministic tool/argument/state/keyword checks, not full semantic scoring; failed API turns may have unreported token costs",
+  "records": [
+    {
+      "id": "D01",
+      "category": "商户查询",
+      "repetition": 1,
+      "turns": [
+        {
+          "message": "推荐人均不超过100元的美食餐厅",
+          "checks": {
+            "tools_all": [
+              "search_shops"
+            ],
+            "arguments": {
+              "search_shops": {
+                "category": "美食",
+                "budget": 10000
+              }
+            }
+          },
+          "errors": [
+            "wrong_arguments:search_shops"
+          ],
+          "result": {
+            "response": "根据您的预算，我为您找到了一家人均消费不超过100元的美食餐厅推荐：\n\n- **梧桐小馆**：适合朋友聚餐的江南菜，提供双人套餐。地址位于上海市徐汇区衡山路 88 号，人均消费为98元。\n\n请注意，本次查询未包含距离信息，如果您需要附近的推荐，请告知具体位置，我会尽力提供帮助。",
+            "conv_id": "24d944a5988949439eb1e7ef3de0bb8e",
+            "agent": "discovery",
+            "mode": "llm",
+            "preferences": {
+              "budget": "10000",
+              "category": "美食"
+            },
+            "tools": [
+              {
+                "tool": "search_shops",
+                "arguments": {
+                  "category": "",
+                  "query": "",
+                  "budget": 10000
+                },
+                "result": [
+                  {
+                    "id": "s1",
+                    "name": "梧桐小馆",
+                    "category": "美食",
+                    "description": "适合朋友聚餐的江南菜，提供双人套餐。",
+                    "address": "上海市徐汇区衡山路 88 号（演示）",
+                    "longitude": 121.446,
+                    "latitude": 31.207,
+                    "price_cents": 9800,
+                    "hours": "11:00–22:00",
+                    "distance_km": null
+                  },
+                  {
+                    "id": "s2",
+                    "name": "光影放映室",
+                    "category": "娱乐",
+                    "description": "小型电影放映空间，适合周末休闲。",
+                    "address": "上海市徐汇区复兴中路 120 号（演示）",
+                    "longitude": 121.455,
+                    "latitude": 31.216,
+                    "price_cents": 6800,
+                    "hours": "10:00–23:00",
+                    "distance_km": null
+                  },
+                  {
+                    "id": "s4",
+                    "name": "慢岛咖啡",
+                    "category": "咖啡",
+                    "description": "有窗边座位的安静咖啡店，适合阅读。",
+                    "address": "上海市徐汇区武康路 38 号（演示）",
+                    "longitude": 121.435,
+                    "latitude": 31.21,
+                    "price_cents": 4500,
+                    "hours": "08:00–20:00",
+                    "distance_km": null
+                  }
+                ]
+              }
+            ],
+            "sources": [],
+            "latency_ms": 3672,
+            "model_calls": 2,
+            "token_usage": {
+              "prompt_tokens": 1751,
+              "completion_tokens": 99,
+              "total_tokens": 1850
+            },
+            "usage_complete": true
+          }
+        }
+      ],
+      "errors": [
+        "wrong_arguments:search_shops"
+      ],
+      "appointments": [],
+      "elapsed_ms": 4562,
+      "passed": false
+    },
+    {
+      "id": "B02",
+      "category": "预约流程",
+      "repetition": 1,
+      "turns": [
+        {
+          "message": "我想预约青岚攀岩（s3）",
+          "checks": {},
+          "errors": [],
+          "result": {
+            "response": "青岚攀岩的可预约时段如下：\n\n- 2026-10-22 18:00\n- 2026-10-23 18:00\n- 2026-10-24 18:00\n- 2026-10-25 18:00\n- 2026-10-26 18:00\n- 2026-10-27 18:00\n- 2026-10-28 18:00\n\n请告诉我您希望预约的具体日期和时间，以及参与人数。例如：“我想要预约2026-10-22 18:00，共2人”。",
+            "conv_id": "6900abc90e8640a98119e6801633cee0",
+            "agent": "booking",
+            "mode": "llm",
+            "preferences": {
+              "category": "运动"
+            },
+            "tools": [
+              {
+                "tool": "available_slots",
+                "arguments": {
+                  "shop_id": "s3"
+                },
+                "result": [
+                  {
+                    "shop_id": "s3",
+                    "label": "2026-10-22 18:00",
+                    "seats": 12
+                  },
+                  {
+                    "shop_id": "s3",
+                    "label": "2026-10-23 18:00",
+                    "seats": 12
+                  },
+                  {
+                    "shop_id": "s3",
+                    "label": "2026-10-24 18:00",
+                    "seats": 12
+                  },
+                  {
+                    "shop_id": "s3",
+                    "label": "2026-10-25 18:00",
+                    "seats": 12
+                  },
+                  {
+                    "shop_id": "s3",
+                    "label": "2026-10-26 18:00",
+                    "seats": 12
+                  },
+                  {
+                    "shop_id": "s3",
+                    "label": "2026-10-27 18:00",
+                    "seats": 12
+                  },
+                  {
+                    "shop_id": "s3",
+                    "label": "2026-10-28 18:00",
+                    "seats": 12
+                  }
+                ]
+              }
+            ],
+            "sources": [],
+            "latency_ms": 6812,
+            "model_calls": 2,
+            "token_usage": {
+              "prompt_tokens": 1935,
+              "completion_tokens": 204,
+              "total_tokens": 2139
+            },
+            "usage_complete": true
+          }
+        },
+        {
+          "message": "明天18点，2个人，请生成草稿",
+          "checks": {
+            "role": "booking",
+            "tools_all": [
+              "prepare_appointment"
+            ],
+            "draft": {
+              "shop_id": "s3",
+              "slot": "2026-10-22 18:00",
+              "party_size": 2
+            }
+          },
+          "errors": [],
+          "result": {
+            "response": "已为您生成预约草稿。请确认预约详情：青岚攀岩，2026-10-22 18:00，共2人。如无误，请输入“确认预约 d236c09d14794d6d8d72db6ce179bf1a”以完成预约。",
+            "conv_id": "6900abc90e8640a98119e6801633cee0",
+            "agent": "booking",
+            "mode": "llm",
+            "preferences": {
+              "category": "运动"
+            },
+            "tools": [
+              {
+                "tool": "prepare_appointment",
+                "arguments": {
+                  "shop_id": "s3",
+                  "slot": "2026-10-22 18:00",
+                  "party_size": 2
+                },
+                "result": {
+                  "id": "d236c09d14794d6d8d72db6ce179bf1a",
+                  "user_id": "u0",
+                  "shop_id": "s3",
+                  "slot": "2026-10-22 18:00",
+                  "party_size": 2,
+                  "status": "draft",
+                  "decision": "",
+                  "created_at": "2026-10-21T08:31:12.407364"
+                }
+              }
+            ],
+            "sources": [],
+            "latency_ms": 4203,
+            "model_calls": 2,
+            "token_usage": {
+              "prompt_tokens": 2232,
+              "completion_tokens": 130,
+              "total_tokens": 2362
+            },
+            "usage_complete": true
+          }
+        }
+      ],
+      "errors": [],
+      "appointments": [
+        {
+          "id": "d236c09d14794d6d8d72db6ce179bf1a",
+          "user_id": "u0",
+          "shop_id": "s3",
+          "slot": "2026-10-22 18:00",
+          "party_size": 2,
+          "status": "draft",
+          "decision": "",
+          "created_at": "2026-10-21T08:31:12.407364"
+        }
+      ],
+      "elapsed_ms": 11563,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "total": 2,
+    "all_repetitions_passed_cases": 1,
+    "unique_cases": 2,
+    "by_category": {
+      "商户查询": {
+        "passed": 0,
+        "total": 1
+      },
+      "预约流程": {
+        "passed": 1,
+        "total": 1
+      }
+    },
+    "error_counts": {
+      "wrong_arguments:search_shops": 1
+    },
+    "completed_model_calls": 6,
+    "reported_tokens": {
+      "prompt_tokens": 5918,
+      "completion_tokens": 433,
+      "total_tokens": 6351
+    },
+    "usage_complete_for_successful_turns": true,
+    "model_turns": 3,
+    "latency_ms": {
+      "p50": 4203,
+      "p95": 6812
+    }
+  },
+  "finished_at": "2026-10-21T16:31:14.887543+08:00"
+}

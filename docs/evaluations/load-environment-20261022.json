@@ -1,0 +1,16 @@
+{
+  "run_id": "5f814e9bbc9e",
+  "database": "citymate_load_5f814e9bbc9e",
+  "mysql_image": "mysql:5.7",
+  "redis_image": "redis:7-alpine",
+  "same_host_load_generator": true,
+  "cpu": "12th Gen Intel Core i9-12900H",
+  "physical_cores": 14,
+  "logical_processors": 20,
+  "windows_memory_bytes": 34070847488,
+  "docker_cpus": 20,
+  "docker_memory_bytes": 16628793344,
+  "container_explicit_cpu_memory_limits": false,
+  "shared_host_background_services": ["CityMate website", "coursepilot-app", "coursepilot-redis", "coursepilot-chromadb", "echomind-frontend"],
+  "python": "3.12.14"
+}

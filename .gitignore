@@ -13,5 +13,8 @@
 *.pyc
 *.sqlite3
 .DS_Store
-backend/data/*
-!backend/data/demo_docs/
+.citymate-local.json
+backend/data/
+**/.ruff_cache/
+**/.mypy_cache/
+**/.cache/

@@ -1,0 +1,199 @@
+{
+  "started_at": "2026-10-21T16:29:34.750212+08:00",
+  "model": "Qwen/Qwen3-32B",
+  "repeat": 1,
+  "concurrency": 2,
+  "dataset_sha256": "d62554ad761b16cecda1700276fa26e171a6e90b4f7d92f7d5eaf76ffb0819f0",
+  "assistant_sha256": "216d69c12786df11a8526992eefb531f841c45c166c0b982ea8b2176936bf0e5",
+  "environment": "live model API + isolated SQLite/FakeRedis + lexical policies; no HTTP load test",
+  "grading": "deterministic tool/argument/state/keyword checks, not full semantic scoring; failed API turns may have unreported token costs",
+  "records": [
+    {
+      "id": "D01",
+      "category": "商户查询",
+      "repetition": 1,
+      "turns": [
+        {
+          "message": "推荐人均不超过100元的美食餐厅",
+          "checks": {
+            "tools_all": [
+              "search_shops"
+            ],
+            "arguments": {
+              "search_shops": {
+                "category": "美食",
+                "budget": 10000
+              }
+            }
+          },
+          "errors": [],
+          "result": {
+            "response": "\n\n为您找到以下符合人均预算100元的美食餐厅：\n\n**梧桐小馆**  \n📍 地址：上海市徐汇区衡山路 88 号（演示）  \n🕒 营业时间：11:00–22:00  \n💰 人均价格：98元  \n📝 说明：适合朋友聚餐的江南菜，提供双人套餐  \n\n由于系统无法获取实时位置信息，无法计算距离。是否需要确认预约此餐厅？  \n请使用口令：**确认预约 <草稿ID:s1>**",
+            "conv_id": "56309a7efcef49f1a6a6739ca4a28d72",
+            "agent": "discovery",
+            "mode": "llm",
+            "preferences": {
+              "budget": "10000",
+              "category": "美食"
+            },
+            "tools": [
+              {
+                "tool": "search_shops",
+                "arguments": {
+                  "category": "美食",
+                  "query": "",
+                  "budget": 10000
+                },
+                "result": [
+                  {
+                    "id": "s1",
+                    "name": "梧桐小馆",
+                    "category": "美食",
+                    "description": "适合朋友聚餐的江南菜，提供双人套餐。",
+                    "address": "上海市徐汇区衡山路 88 号（演示）",
+                    "longitude": 121.446,
+                    "latitude": 31.207,
+                    "price_cents": 9800,
+                    "hours": "11:00–22:00",
+                    "distance_km": null
+                  }
+                ]
+              }
+            ],
+            "sources": [],
+            "latency_ms": 24656,
+            "model_calls": 2,
+            "token_usage": {
+              "prompt_tokens": 1748,
+              "completion_tokens": 692,
+              "total_tokens": 2440
+            },
+            "usage_complete": true
+          }
+        }
+      ],
+      "errors": [],
+      "appointments": [],
+      "elapsed_ms": 25297,
+      "passed": true
+    },
+    {
+      "id": "B02",
+      "category": "预约流程",
+      "repetition": 1,
+      "turns": [
+        {
+          "message": "我想预约青岚攀岩（s3）",
+          "checks": {},
+          "errors": [],
+          "result": {
+            "response": "\n\n未找到符合条件的商户，请确认商户名称或ID是否正确。建议检查以下信息：\n1. 商户全称是否包含错别字（如\"青岚攀岩\"是否应为其他名称）\n2. s3是否为有效商户ID（当前系统未识别该标识）\n3. 是否需要补充所在区域等定位信息\n\n您也可以尝试提供其他商户名称或重新输入完整需求。",
+            "conv_id": "2b055192858b436895463905ef5eb258",
+            "agent": "booking",
+            "mode": "llm",
+            "preferences": {
+              "category": "运动"
+            },
+            "tools": [
+              {
+                "tool": "search_shops",
+                "arguments": {
+                  "category": "运动",
+                  "query": "青岚攀岩 s3",
+                  "budget": null
+                },
+                "result": []
+              }
+            ],
+            "sources": [],
+            "latency_ms": 28328,
+            "model_calls": 2,
+            "token_usage": {
+              "prompt_tokens": 2149,
+              "completion_tokens": 748,
+              "total_tokens": 2897
+            },
+            "usage_complete": true
+          }
+        },
+        {
+          "message": "明天18点，2个人，请生成草稿",
+          "checks": {
+            "role": "booking",
+            "tools_all": [
+              "prepare_appointment"
+            ],
+            "draft": {
+              "shop_id": "s3",
+              "slot": "2026-10-22 18:00",
+              "party_size": 2
+            }
+          },
+          "errors": [
+            "missing_tool:prepare_appointment",
+            "draft_missing_or_wrong"
+          ],
+          "result": {
+            "response": "\n\n未找到符合条件的商户，请先确认商户名称或ID是否正确。您提到的\"青岚攀岩（s3）\"在系统中无法识别，建议：\n1. 检查商户ID是否为有效编码（当前s3未通过校验）\n2. 提供更完整的商户名称或所在区域信息\n3. 使用`search_shops`工具重新查询商户\n\n是否需要我协助您重新搜索商户？",
+            "conv_id": "2b055192858b436895463905ef5eb258",
+            "agent": "booking",
+            "mode": "llm",
+            "preferences": {
+              "category": "运动"
+            },
+            "tools": [],
+            "sources": [],
+            "latency_ms": 18094,
+            "model_calls": 1,
+            "token_usage": {
+              "prompt_tokens": 922,
+              "completion_tokens": 559,
+              "total_tokens": 1481
+            },
+            "usage_complete": true
+          }
+        }
+      ],
+      "errors": [
+        "missing_tool:prepare_appointment",
+        "draft_missing_or_wrong"
+      ],
+      "appointments": [],
+      "elapsed_ms": 46687,
+      "passed": false
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "total": 2,
+    "all_repetitions_passed_cases": 1,
+    "unique_cases": 2,
+    "by_category": {
+      "商户查询": {
+        "passed": 1,
+        "total": 1
+      },
+      "预约流程": {
+        "passed": 0,
+        "total": 1
+      }
+    },
+    "error_counts": {
+      "missing_tool:prepare_appointment": 1,
+      "draft_missing_or_wrong": 1
+    },
+    "completed_model_calls": 5,
+    "reported_tokens": {
+      "prompt_tokens": 4819,
+      "completion_tokens": 1999,
+      "total_tokens": 6818
+    },
+    "usage_complete_for_successful_turns": true,
+    "model_turns": 3,
+    "latency_ms": {
+      "p50": 24656,
+      "p95": 28328
+    }
+  },
+  "finished_at": "2026-10-21T16:30:21.813741+08:00"
+}

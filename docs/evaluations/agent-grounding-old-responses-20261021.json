@@ -1,0 +1,58 @@
+{
+  "description": "Old model responses checked only against the newly added grounding assertions; no new API calls, original report unchanged.",
+  "records": [
+    {
+      "id": "O01",
+      "checks": {
+        "order_receipt": true,
+        "response_forbidden": [
+          "预约结果",
+          "预约成功"
+        ]
+      },
+      "errors": [
+        "unsupported_response:预约结果"
+      ]
+    },
+    {
+      "id": "O03",
+      "checks": {
+        "order_receipt": true,
+        "response_forbidden": [
+          "预约结果",
+          "预约成功"
+        ]
+      },
+      "errors": []
+    },
+    {
+      "id": "S06",
+      "checks": {
+        "response_forbidden": [
+          "精准推荐",
+          "允许使用定位功能",
+          "提供具体位置或允许"
+        ]
+      },
+      "errors": [
+        "unsupported_response:精准推荐",
+        "unsupported_response:允许使用定位功能",
+        "unsupported_response:提供具体位置或允许"
+      ]
+    },
+    {
+      "id": "B02",
+      "checks": {
+        "draft_receipt": true,
+        "response_forbidden": [
+          "提前24小时",
+          "确认预约 s3"
+        ]
+      },
+      "errors": [
+        "unsupported_response:提前24小时",
+        "draft_receipt_missing_or_wrong"
+      ]
+    }
+  ]
+}

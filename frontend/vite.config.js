@@ -4,18 +4,17 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   server: {
-    port: 5173,
+    port: 15173,
     proxy: {
-      '/api/python': {
-        target: process.env.VITE_PYTHON_API_URL || 'http://localhost:8000',
+      '/uploads': {
+        target: process.env.CITYMATE_API_URL || 'http://localhost:18000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/python/, '')
       },
-      '/api/java': {
-        target: process.env.VITE_JAVA_API_URL || 'http://localhost:8080',
+      '/api': {
+        target: process.env.CITYMATE_API_URL || 'http://localhost:18000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/java/, '')
-      }
-    }
-  }
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 })

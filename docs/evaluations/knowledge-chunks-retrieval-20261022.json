@@ -1,0 +1,257 @@
+{
+  "started_at": "2026-10-22T05:53:10.708328+00:00",
+  "model": "Qwen/Qwen3-32B",
+  "live_requested": false,
+  "environment": "Real Chroma default ONNX embeddings + real MCP stdio subprocess + isolated SQLite/FakeRedis + FastAPI TestClient",
+  "versions": {
+    "chromadb": "0.5.23",
+    "mcp": "1.9.4",
+    "onnxruntime": "1.31.0",
+    "openai": "1.58.1",
+    "numpy": "2.5.4",
+    "posthog": "3.25.0"
+  },
+  "python": "3.12.14",
+  "source_sha256": {
+    "citymate\\knowledge.py": "2e2c51f57925edb593a3e79d9db338ef6d6736e72ec6831f2f291d1e5189c2f6",
+    "citymate\\knowledge_client.py": "8803b39f7f35deffa72bfd6388089b1f2e0fac1916f75482ddb67110c1bd4e95",
+    "citymate\\knowledge_server.py": "55e35be9323f68eefe4871af6243a43be033ba3980b989296e4a0108994e271b",
+    "citymate\\assistant.py": "228d9500ee99a8d8aaca9667955c040b32f437b86e12412bbe82069548ede572",
+    "citymate\\app.py": "b35f9b2acbceddc39d915c90e333d0b79f1da7de0cfedb1f218835da3a7487fe",
+    "citymate\\policies\\优惠与订单.txt": "aeb23c4bf71a4860241f357c8f86fc1eb5d87854d0b3e5950d8b896d90d49c8d",
+    "citymate\\policies\\社区与积分.txt": "9934f06a88faac224dd6382d857dec98d7af285bbd6eb640336d52672c3dada3",
+    "citymate\\policies\\预约规则.txt": "fd34a3441ebbf50828963254513993e8105c887c2e9fb4536285dceaddca2d2b"
+  },
+  "phases": {
+    "chroma": {
+      "passed": true,
+      "documents": 3,
+      "chunks": 12,
+      "collection": "citymate_policy_chunks_v1",
+      "splitter": "paragraph-char-v1",
+      "chunk_size_chars": 320,
+      "chunk_overlap_chars": 48,
+      "dimensions": 384,
+      "embedding": "Chroma default all-MiniLM-L6-v2 ONNX",
+      "reopen_count": 12
+    },
+    "mcp": {
+      "passed": true,
+      "tools": [
+        "knowledge_add",
+        "knowledge_search",
+        "knowledge_stats"
+      ],
+      "documents": 3,
+      "chunks": 12,
+      "retrieval_cases": [
+        {
+          "query": "预约草稿多久失效？",
+          "expected_title": "预约规则",
+          "expected_evidence": "15 分钟",
+          "ranked_titles": [
+            "社区与积分",
+            "预约规则",
+            "优惠与订单"
+          ],
+          "ranked_chunks": [
+            {
+              "chunk_id": "2f1236c91306766f77f7da2fdd142b81f0f998cd4c0edd16e1b9ddc48d609e85",
+              "source": "citymate/社区与积分.txt",
+              "section": "CityMate 社区与积分规则，版本 2026-10-18。 / 积分排行",
+              "content": "排行榜依据持久化的签到积分记录重建。"
+            },
+            {
+              "chunk_id": "f603c112ca7ab013ed01796d5e60ff98b37b0f24b00624f773e3a0e819bff30c",
+              "source": "citymate/预约规则.txt",
+              "section": "CityMate 演示预约规则，版本 2026-10-18。 / 草稿与确认",
+              "content": "预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。"
+            },
+            {
+              "chunk_id": "9bd8ec13233357e89e883afbf2dc97a3ee825b7263037667d20f37fe9bb0327c",
+              "source": "citymate/优惠与订单.txt",
+              "section": "CityMate 演示优惠规则，版本 2026-10-18。 / 取消与名额恢复",
+              "content": "已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。"
+            }
+          ],
+          "top1_correct": false,
+          "top1_chunk_correct": false,
+          "top3_chunk_hit": true
+        },
+        {
+          "query": "填好了预订但还没提交，可以保留多久？",
+          "expected_title": "预约规则",
+          "expected_evidence": "15 分钟",
+          "ranked_titles": [
+            "社区与积分",
+            "优惠与订单",
+            "预约规则"
+          ],
+          "ranked_chunks": [
+            {
+              "chunk_id": "2f1236c91306766f77f7da2fdd142b81f0f998cd4c0edd16e1b9ddc48d609e85",
+              "source": "citymate/社区与积分.txt",
+              "section": "CityMate 社区与积分规则，版本 2026-10-18。 / 积分排行",
+              "content": "排行榜依据持久化的签到积分记录重建。"
+            },
+            {
+              "chunk_id": "34a0f3ed73b60a48be6eae595f79b2a45a6d59d87e1618cd98b0cb85b6de5cd0",
+              "source": "citymate/优惠与订单.txt",
+              "section": "CityMate 演示优惠规则，版本 2026-10-18。 / 领取条件",
+              "content": "每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。"
+            },
+            {
+              "chunk_id": "f603c112ca7ab013ed01796d5e60ff98b37b0f24b00624f773e3a0e819bff30c",
+              "source": "citymate/预约规则.txt",
+              "section": "CityMate 演示预约规则，版本 2026-10-18。 / 草稿与确认",
+              "content": "预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。"
+            }
+          ],
+          "top1_correct": false,
+          "top1_chunk_correct": false,
+          "top3_chunk_hit": true
+        },
+        {
+          "query": "签到能得多少积分？",
+          "expected_title": "社区与积分",
+          "expected_evidence": "10 积分",
+          "ranked_titles": [
+            "社区与积分",
+            "预约规则",
+            "预约规则"
+          ],
+          "ranked_chunks": [
+            {
+              "chunk_id": "2f1236c91306766f77f7da2fdd142b81f0f998cd4c0edd16e1b9ddc48d609e85",
+              "source": "citymate/社区与积分.txt",
+              "section": "CityMate 社区与积分规则，版本 2026-10-18。 / 积分排行",
+              "content": "排行榜依据持久化的签到积分记录重建。"
+            },
+            {
+              "chunk_id": "f603c112ca7ab013ed01796d5e60ff98b37b0f24b00624f773e3a0e819bff30c",
+              "source": "citymate/预约规则.txt",
+              "section": "CityMate 演示预约规则，版本 2026-10-18。 / 草稿与确认",
+              "content": "预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。"
+            },
+            {
+              "chunk_id": "e64159216c741236f4fa4a77ec93dda3d347c447bfcc6ee130e0ea5bb3f11181",
+              "source": "citymate/预约规则.txt",
+              "section": "CityMate 演示预约规则，版本 2026-10-18。 / 改期限制",
+              "content": "目前不支持已批准预约的改期；需要联系商户处理，助手不得声称已完成改约。"
+            }
+          ],
+          "top1_correct": true,
+          "top1_chunk_correct": false,
+          "top3_chunk_hit": false
+        },
+        {
+          "query": "我今天已经打过卡，再打卡还能加分吗？",
+          "expected_title": "社区与积分",
+          "expected_evidence": "重复签到不重复增加积分",
+          "ranked_titles": [
+            "社区与积分",
+            "社区与积分",
+            "优惠与订单"
+          ],
+          "ranked_chunks": [
+            {
+              "chunk_id": "b408fb34549bc230be64440eef988cc39dc9fb9853c29340ccada4bf8870b7b4",
+              "source": "citymate/社区与积分.txt",
+              "section": "CityMate 社区与积分规则，版本 2026-10-18。 / 签到积分",
+              "content": "每天按 Asia/Shanghai 日期签到可得 10 积分；同一天重复签到不重复增加积分。\n连续签到跨月统计；今天尚未签到时展示截至昨天的连续天数。"
+            },
+            {
+              "chunk_id": "2f1236c91306766f77f7da2fdd142b81f0f998cd4c0edd16e1b9ddc48d609e85",
+              "source": "citymate/社区与积分.txt",
+              "section": "CityMate 社区与积分规则，版本 2026-10-18。 / 积分排行",
+              "content": "排行榜依据持久化的签到积分记录重建。"
+            },
+            {
+              "chunk_id": "34a0f3ed73b60a48be6eae595f79b2a45a6d59d87e1618cd98b0cb85b6de5cd0",
+              "source": "citymate/优惠与订单.txt",
+              "section": "CityMate 演示优惠规则，版本 2026-10-18。 / 领取条件",
+              "content": "每位用户每种优惠券最多保留一个有效订单。仅在活动开始后、结束前且有余量时可领取。"
+            }
+          ],
+          "top1_correct": true,
+          "top1_chunk_correct": true,
+          "top3_chunk_hit": true
+        },
+        {
+          "query": "抢到券显示处理中，是已经成功了吗？",
+          "expected_title": "优惠与订单",
+          "expected_evidence": "受理不等于订单成功",
+          "ranked_titles": [
+            "优惠与订单",
+            "优惠与订单",
+            "预约规则"
+          ],
+          "ranked_chunks": [
+            {
+              "chunk_id": "af71be2e1b2d36405d150e82132182d4320a167efb9951a6ba2549b8561e6db6",
+              "source": "citymate/优惠与订单.txt",
+              "section": "CityMate 演示优惠规则，版本 2026-10-18。 / 异步订单状态",
+              "content": "抢购请求返回受理编号后，后台异步生成订单；受理不等于订单成功。\nready 表示演示券订单已生成，processing 表示处理中，rejected 表示失败，cancelled 表示已取消。"
+            },
+            {
+              "chunk_id": "9bd8ec13233357e89e883afbf2dc97a3ee825b7263037667d20f37fe9bb0327c",
+              "source": "citymate/优惠与订单.txt",
+              "section": "CityMate 演示优惠规则，版本 2026-10-18。 / 取消与名额恢复",
+              "content": "已生成且未取消的 ready 订单可由本人取消，名额通过可靠事件恢复，恢复前可能短暂显示已领。"
+            },
+            {
+              "chunk_id": "f603c112ca7ab013ed01796d5e60ff98b37b0f24b00624f773e3a0e819bff30c",
+              "source": "citymate/预约规则.txt",
+              "section": "CityMate 演示预约规则，版本 2026-10-18。 / 草稿与确认",
+              "content": "预约先生成有效期 15 分钟的草稿，用户明确确认后进入待审核状态，不立即占用名额。"
+            }
+          ],
+          "top1_correct": true,
+          "top1_chunk_correct": true,
+          "top3_chunk_hit": true
+        },
+        {
+          "query": "平台会真的扣钱退款吗？",
+          "expected_title": "优惠与订单",
+          "expected_evidence": "不执行真实扣款或退款",
+          "ranked_titles": [
+            "优惠与订单",
+            "预约规则",
+            "社区与积分"
+          ],
+          "ranked_chunks": [
+            {
+              "chunk_id": "dce5c1371785a0420ba9fc70a52dd4e3e8f00e9d6cbee5a9d6fb0c5b6408740a",
+              "source": "citymate/优惠与订单.txt",
+              "section": "CityMate 演示优惠规则，版本 2026-10-18。 / 支付说明",
+              "content": "本平台不接真实支付，也不执行真实扣款或退款。金额使用人民币分保存。"
+            },
+            {
+              "chunk_id": "65ad1e1062e7b49b72a622852e524d19bb4563f4b643cec5169b2e1cfa1cf43d",
+              "source": "citymate/预约规则.txt",
+              "section": "CityMate 演示预约规则，版本 2026-10-18。 / 演示范围",
+              "content": "所有店铺、地址、活动均为演示资料，不代表真实商户承诺。"
+            },
+            {
+              "chunk_id": "2f1236c91306766f77f7da2fdd142b81f0f998cd4c0edd16e1b9ddc48d609e85",
+              "source": "citymate/社区与积分.txt",
+              "section": "CityMate 社区与积分规则，版本 2026-10-18。 / 积分排行",
+              "content": "排行榜依据持久化的签到积分记录重建。"
+            }
+          ],
+          "top1_correct": true,
+          "top1_chunk_correct": true,
+          "top3_chunk_hit": true
+        }
+      ],
+      "top1_hits": 4,
+      "top1_chunk_hits": 3,
+      "top3_chunk_hits": 5,
+      "total_queries": 6
+    }
+  },
+  "chat_records": [],
+  "limits": "Three demo policy documents; keyword checks are not full semantic grading; no browser, production database, remote MCP, load or HA test.",
+  "passed": true,
+  "finished_at": "2026-10-22T05:53:18.723755+00:00"
+}

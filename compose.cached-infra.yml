@@ -1,0 +1,7 @@
+# Optional local verification against images already present on this machine.
+# MySQL 5.7 is for this compatibility check only; default deployment uses 8.4.
+services:
+  mysql:
+    image: mysql:5.7
+  redis:
+    image: redis:7-alpine

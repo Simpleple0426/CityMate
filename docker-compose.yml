@@ -1,0 +1,83 @@
+name: citymate
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: citymate
+      MYSQL_USER: citymate
+      MYSQL_PASSWORD: ${CITYMATE_MYSQL_PASSWORD:-citymate-local-only}
+      MYSQL_ROOT_PASSWORD: ${CITYMATE_MYSQL_ROOT_PASSWORD:-citymate-root-local-only}
+    ports: ["127.0.0.1:13306:3306"]
+    volumes: ["citymate-mysql:/var/lib/mysql"]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "always"]
+    ports: ["127.0.0.1:16379:6379"]
+    volumes: ["citymate-redis:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  init:
+    build: &build
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        AI_EXTRAS: ${CITYMATE_AI_EXTRAS:-false}
+    environment: &env
+      CITYMATE_DATABASE_URL: mysql+pymysql://citymate:${CITYMATE_MYSQL_PASSWORD:-citymate-local-only}@mysql:3306/citymate?charset=utf8mb4
+      CITYMATE_REDIS_URL: redis://redis:6379/0
+      CITYMATE_DEMO: ${CITYMATE_DEMO:-true}
+      CITYMATE_COOKIE_SECURE: ${CITYMATE_COOKIE_SECURE:-false}
+      CITYMATE_CACHE_MODE: ${CITYMATE_CACHE_MODE:-mutex}
+      CITYMATE_UPLOADS: /app/data/citymate/uploads
+      CITYMATE_KNOWLEDGE_TRANSPORT: ${CITYMATE_KNOWLEDGE_TRANSPORT:-local}
+      CITYMATE_KNOWLEDGE_MODE: ${CITYMATE_KNOWLEDGE_MODE:-lexical}
+      CITYMATE_KNOWLEDGE_CHUNK_SIZE: ${CITYMATE_KNOWLEDGE_CHUNK_SIZE:-320}
+      CITYMATE_KNOWLEDGE_CHUNK_OVERLAP: ${CITYMATE_KNOWLEDGE_CHUNK_OVERLAP:-48}
+      CITYMATE_CHROMA_PATH: /app/data/citymate/chroma
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+    command: ["sh", "-c", "alembic upgrade head && if [ \"$$CITYMATE_DEMO\" = true ]; then python -m citymate.cli seed; fi"]
+    depends_on:
+      mysql: {condition: service_healthy}
+      redis: {condition: service_healthy}
+  api:
+    build: *build
+    environment: *env
+    ports: ["127.0.0.1:18000:8000"]
+    volumes: ["citymate-data:/app/data/citymate"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  worker:
+    build: *build
+    environment: *env
+    command: ["python", "-m", "citymate.worker"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    restart: unless-stopped
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports: ["127.0.0.1:15173:80"]
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+volumes:
+  citymate-mysql:
+  citymate-redis:
+  citymate-data:

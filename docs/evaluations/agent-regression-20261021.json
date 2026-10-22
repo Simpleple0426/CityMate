@@ -1,0 +1,415 @@
+{
+  "date": "2026-10-21",
+  "environment": "Python 3.12.14; SQLite + FakeRedis; scripted model responses for deterministic Agent regression",
+  "summary": {
+    "passed": 57,
+    "failed": 0,
+    "skipped": 10
+  },
+  "new_agent_tests": 26,
+  "source_xml_sha256": "901b74004888be6287c2b21675f8bcd3ada7ee8cc722ef6e3a562aae0755b5fe",
+  "cases": [
+    {
+      "class": "tests.test_agent",
+      "name": "test_booking_followup_preserves_role",
+      "seconds": 0.284,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[my_orders-args0-\\u67e5\\u6211\\u7684\\u8ba2\\u5355]",
+      "seconds": 0.252,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[claim-args1-\\u62a2\\u8d2d\\u4f18\\u60e0\\u5238]",
+      "seconds": 0.253,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[confirm_appointment-args2-\\u9884\\u7ea6]",
+      "seconds": 0.272,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[my_orders-args3-\\u63a8\\u8350\\u5496\\u5561\\u5e97]",
+      "seconds": 0.293,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[search_shops-args4-\\u63a8\\u8350\\u5546\\u6237]",
+      "seconds": 0.253,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[search_shops-args5-\\u63a8\\u8350\\u5546\\u6237]",
+      "seconds": 0.275,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[search_shops-{\"budget\":-\\u63a8\\u8350\\u5546\\u6237]",
+      "seconds": 0.315,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[prepare_appointment-args7-\\u9884\\u7ea6]",
+      "seconds": 0.343,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[prepare_appointment-args8-\\u9884\\u7ea6]",
+      "seconds": 0.408,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_invalid_or_unauthorized_tool_has_no_side_effects[prepare_appointment-args9-\\u9884\\u7ea6]",
+      "seconds": 0.356,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_booking_tool_chain_only_creates_draft_and_reports_usage",
+      "seconds": 0.43,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_confirm_owned_draft_is_idempotent_and_foreign_draft_rejected",
+      "seconds": 0.367,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_tool_outage_is_sanitized_and_model_can_explain",
+      "seconds": 0.365,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_model_failure_releases_lock_and_http_returns_503",
+      "seconds": 0.457,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_round_limit_and_per_round_tool_limit",
+      "seconds": 0.805,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_successful_tool_loop_stops_at_round_limit",
+      "seconds": 0.641,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_memory_is_bounded_preferences_can_clear_and_expire",
+      "seconds": 0.951,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_repeated_tool_failure_has_actionable_fallback",
+      "seconds": 0.725,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_tool_choice_only_for_supported_category_search[\\u63a8\\u8350\\u5496\\u5561\\u5e97-True]",
+      "seconds": 0.648,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_tool_choice_only_for_supported_category_search[\\u63a8\\u8350\\u79bb\\u6211\\u6700\\u8fd1\\u7684\\u5496\\u5561\\u5e97-False]",
+      "seconds": 0.608,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_tool_choice_only_for_supported_category_search[\\u63a8\\u8350\\u6211\\u9644\\u8fd1\\u7684\\u5496\\u5561\\u5e97-False]",
+      "seconds": 0.634,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_tool_choice_only_for_supported_category_search[\\u9884\\u7ea6\\u5496\\u5561\\u5e97-False]",
+      "seconds": 0.585,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_same_conversation_rejects_overlapping_turn",
+      "seconds": 0.604,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_eval_checker_detects_wrong_arguments_missing_draft_and_leaks",
+      "seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_agent",
+      "name": "test_explicit_topic_switch_and_user_isolation",
+      "seconds": 0.573,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_application",
+      "name": "test_public_catalog_routes_and_validation",
+      "seconds": 0.659,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_application",
+      "name": "test_shared_routers_resolve_services_from_each_application",
+      "seconds": 0.731,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_demo_data",
+      "name": "test_rich_seed_is_repeatable_and_preserves_activity",
+      "seconds": 3.632,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_demo_data",
+      "name": "test_rich_seed_refuses_non_demo_and_phone_collision",
+      "seconds": 0.47,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_model_config",
+      "name": "test_model_switch_controls_configured_key",
+      "seconds": 0.003,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_login_code_single_use_logout_and_role_boundary",
+      "seconds": 0.7,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_login_rate_limit_and_production_code_disabled",
+      "seconds": 0.602,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_negative_cache_and_invalidation",
+      "seconds": 0.471,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_geo_and_uv_dedup",
+      "seconds": 0.623,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_atomic_claim_no_oversell_and_one_per_user",
+      "seconds": 0.621,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_consumer_replay_cancel_and_reclaim",
+      "seconds": 0.556,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_pending_recovered_after_worker_crash",
+      "seconds": 0.496,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_database_rejection_compensates_reservation",
+      "seconds": 0.496,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_order_ownership",
+      "seconds": 0.64,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_activity_window_and_missing_stock_fail_closed",
+      "seconds": 0.485,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_appointment_confirmation_ownership_and_capacity",
+      "seconds": 0.538,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_community_likes_follows_feed_and_unfollow",
+      "seconds": 0.685,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_feed_same_timestamp_cursor_has_no_duplicates",
+      "seconds": 0.668,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_checkin_idempotent_and_bitmap_recovery",
+      "seconds": 0.491,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_upload_validates_content_and_note_images",
+      "seconds": 2.286,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_assistant_scoped_memory_and_rules_mode",
+      "seconds": 0.733,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_admin_approval_api",
+      "seconds": 0.716,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_admin_create_shop_and_voucher",
+      "seconds": 0.656,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_model_cannot_override_identity_or_execute_purchase[my_orders-{\"user_id\":\"u1\"}]",
+      "seconds": 0.608,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_platform",
+      "name": "test_model_cannot_override_identity_or_execute_purchase[claim-{\"voucher_id\":\"v1\"}]",
+      "seconds": 0.818,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_concurrent_http_claims_finish_with_ten_orders[0]",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_concurrent_http_claims_finish_with_ten_orders[1]",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_concurrent_http_claims_finish_with_ten_orders[2]",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_simultaneous_duplicate_claims_and_deliveries",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_terminated_worker_is_recovered_by_new_process[before_commit]",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_terminated_worker_is_recovered_by_new_process[after_commit]",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_transaction_failure_rolls_back_and_pending_retries",
+      "seconds": 0.002,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_outbox_retries_after_redis_applied_event_but_reply_was_lost",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_concurrent_cancel_restores_stock_once_and_allows_reclaim",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_real_reliability",
+      "name": "test_concurrent_approval_cannot_overbook",
+      "seconds": 0.001,
+      "status": "skipped"
+    },
+    {
+      "class": "tests.test_sessions",
+      "name": "test_cookie_round_trip_rotation_and_logout",
+      "seconds": 0.643,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_sessions",
+      "name": "test_code_is_bound_to_browser_and_phone",
+      "seconds": 0.628,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_sessions",
+      "name": "test_code_expiry_attempt_limit_and_anonymous_access",
+      "seconds": 0.668,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_sessions",
+      "name": "test_first_login_registers_and_sessions_are_isolated",
+      "seconds": 0.747,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_sessions",
+      "name": "test_cookie_writes_require_csrf_header",
+      "seconds": 0.627,
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_sessions",
+      "name": "test_secure_cookie_option",
+      "seconds": 0.625,
+      "status": "passed"
+    }
+  ]
+}
